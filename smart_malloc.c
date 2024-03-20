@@ -20,7 +20,13 @@ struct memory_block_metadata {
     int is_busy;
 };
 
-void *smartMalloc(size_t size) {
+void *smart_free(void* pointer) {
+    if (!pointer) return;
+    struct memory_block_metadata *block_metadata = (struct memory_block_metadata *)((char *)pointer - sizeof(struct memory_block_metadata));
+    block_metadata->is_busy = 0;
+}
+
+void *smart_malloc(size_t size) {
     if (size <= INVALID_MEMORY_SIZE)
         return NULL;
 
