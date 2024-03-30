@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #define _STR(x) #x
 #define INVALID_MEMORY_SIZE 0
@@ -15,15 +16,17 @@
     }
 
 struct memory_block_metadata {
+    int allocation_id;
     size_t size;
     struct memory_block_metadata *next_block;
-    int is_busy;
+    
+    time_t allocation_time; // Timestamp when the block was allocated
+    time_t last_access_time; // Timestamp of the last access to this block
 };
 
-void *smart_free(void* pointer) {
+void smart_free(void* pointer) {
     if (!pointer) return;
     struct memory_block_metadata *block_metadata = (struct memory_block_metadata *)((char *)pointer - sizeof(struct memory_block_metadata));
-    block_metadata->is_busy = 0;
 }
 
 void *smart_malloc(size_t size) {
